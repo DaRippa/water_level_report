@@ -17,7 +17,7 @@ class MyHomePage extends StatefulWidget {
 class HomePageState extends State {
   List<LevelData> _data = [];
 
-  final Color headlineColor = Color(0x66FF00FF);
+  final Color headlineColor = Color(0xFF05B8FF);
 
   @override
   void initState() {
