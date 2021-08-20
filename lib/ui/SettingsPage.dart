@@ -69,6 +69,27 @@ class SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final List<dynamic> modes = [
+      {
+        "mode": SelectedDaysMode.EVERY_DAY,
+        "title": Text("every day"),
+        "subtitle": null,
+      },
+      {
+        "mode": SelectedDaysMode.WORK_DAY,
+        "title": Text("on work days"),
+        "subtitle": null,
+      },
+      {
+        "mode": SelectedDaysMode.CUSTOM,
+        "title": Text("on these days:"),
+        "subtitle": Text(
+          _getSelectedDayLabels(),
+          style: TextStyle(fontSize: 11),
+        ),
+      },
+    ];
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Settings"),
@@ -81,27 +102,19 @@ class SettingsPageState extends State<SettingsPage> {
             children: [
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                 Text("Inform me..."),
-                RadioListTile<SelectedDaysMode>(
-                  value: SelectedDaysMode.EVERY_DAY,
-                  title: Text("every day"),
-                  groupValue: _settings.mode,
-                  onChanged: _modeChanged,
-                ),
-                RadioListTile<SelectedDaysMode>(
-                  value: SelectedDaysMode.WORK_DAY,
-                  title: Text("on work days"),
-                  groupValue: _settings.mode,
-                  onChanged: _modeChanged,
-                ),
-                RadioListTile<SelectedDaysMode>(
-                  value: SelectedDaysMode.CUSTOM,
-                  title: Text("on these days:"),
-                  subtitle: Text(
-                    _getSelectedDayLabels(),
-                    style: TextStyle(fontSize: 11),
-                  ),
-                  groupValue: _settings.mode,
-                  onChanged: _modeChanged,
+                ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: modes.length,
+                  itemBuilder: (builder, index) {
+                    return RadioListTile<SelectedDaysMode>(
+                      value: modes[index]["mode"],
+                      title: modes[index]["title"],
+                      subtitle: modes[index]["subtitle"],
+                      groupValue: _settings.mode,
+                      onChanged: _modeChanged,
+                      activeColor: Theme.of(context).accentColor,
+                    );
+                  },
                 ),
               ]),
               Container(

@@ -50,6 +50,7 @@ class SelectDaysDialogState extends State<SelectDaysDialog> {
               return CheckboxListTile(
                 title: Text(_getDayLabel(index)),
                 value: _selection[index],
+                activeColor: Theme.of(context).accentColor,
                 onChanged: (value) => _changeSelection(value, index),
               );
             },
