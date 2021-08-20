@@ -48,14 +48,20 @@ class HomePageState extends State {
         }
 
         if (snapshot.hasError) {
-          return Center(
+          return Padding(
+            padding: EdgeInsets.only(top: 10, left: 10),
             child: ListView(
               children: [
                 Text(
                   "Error",
                   style: headlineStyle,
                 ),
-                Text(snapshot.error.toString()),
+                Padding(
+                  padding: EdgeInsets.only(top: 20, left: 30),
+                  child: Text(
+                    snapshot.error.toString(),
+                  ),
+                ),
               ],
             ),
           );
