@@ -15,80 +15,84 @@ class MyHomePage extends StatefulWidget {
 }
 
 class HomePageState extends State {
-  List<LevelData> _data = [];
-
   final Color headlineColor = Color(0xFF05B8FF);
 
   @override
   void initState() {
     super.initState();
-
-    _queryData();
   }
 
-  void _queryData() async {
-    setState(() {
-      _data.clear();
-    });
-
+  Future<List<LevelData>> _queryData() async {
     DataProvider provider = DataProvider();
 
-    provider
-        .getData()
-        .then((result) => setState(() => _data = result))
-        .catchError(
-      (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-            duration: Duration(seconds: 2),
-          ),
-        );
-      },
-    );
+    return provider.getData();
   }
 
   Widget getDisplayWidget() {
-    if (_data.length == 0)
-      return Center(
-        child: Platform.isIOS
-            ? CupertinoActivityIndicator()
-            : CircularProgressIndicator(),
-      );
-
     DateFormat formatter = DateFormat("dd.MM.y, HH:mm", "de_DE");
-
-    LevelData data = _data[_data.length - 1];
     TextStyle headlineStyle = TextStyle(
       color: headlineColor,
       fontWeight: FontWeight.bold,
       fontSize: 40,
     );
 
-    return Padding(
-      padding: EdgeInsets.only(left: 10, top: 10),
-      child: ListView(
-        children: [
-          Text(
-            "Current water level:",
-            style: headlineStyle,
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 20, left: 30, bottom: 50),
-            child: Text(
-              "${data.value.toInt()}cm",
+    return FutureBuilder(
+      future: _queryData(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return Center(
+            child: Platform.isIOS
+                ? CupertinoActivityIndicator()
+                : CircularProgressIndicator(),
+          );
+        }
+
+        if (snapshot.hasError) {
+          return Center(
+            child: ListView(
+              children: [
+                Text(
+                  "Error",
+                  style: headlineStyle,
+                ),
+                Text(snapshot.error.toString()),
+              ],
             ),
+          );
+        }
+
+        List data = snapshot.data as List;
+        int index = data.length - 1;
+
+        LevelData leveldata = data[index];
+
+        return Padding(
+          padding: EdgeInsets.only(left: 10, top: 10),
+          child: ListView(
+            children: [
+              Text(
+                "Current water level:",
+                style: headlineStyle,
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 20, left: 30, bottom: 50),
+                child: Text(
+                  "${leveldata.value.toInt()}cm",
+                ),
+              ),
+              Text(
+                "Date:",
+                style: headlineStyle,
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 20, left: 30),
+                child:
+                    Text("${formatter.format(leveldata.timestamp.toLocal())}"),
+              )
+            ],
           ),
-          Text(
-            "Date:",
-            style: headlineStyle,
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 20, left: 30),
-            child: Text("${formatter.format(data.timestamp.toLocal())}"),
-          )
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -110,10 +114,10 @@ class HomePageState extends State {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 duration: Duration(milliseconds: 500),
-                content: Text("double tap!"),
+                content: Text("Updating!"),
               ),
             );
-            _queryData();
+            setState(() {});
           },
           child: getDisplayWidget(),
         ),
