@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:water_level_report/model/LevelData.dart';
 import 'package:water_level_report/ui/SettingsPage.dart';
 import 'package:water_level_report/util/DataProvider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -53,7 +54,7 @@ class HomePageState extends State {
             child: ListView(
               children: [
                 Text(
-                  "Error",
+                  AppLocalizations.of(context)!.error,
                   style: headlineStyle,
                 ),
                 Padding(
@@ -77,7 +78,7 @@ class HomePageState extends State {
           child: ListView(
             children: [
               Text(
-                "Current water level:",
+                AppLocalizations.of(context)!.level + ":",
                 style: headlineStyle,
               ),
               Padding(
@@ -87,7 +88,7 @@ class HomePageState extends State {
                 ),
               ),
               Text(
-                "Date:",
+                AppLocalizations.of(context)!.date + ":",
                 style: headlineStyle,
               ),
               Padding(
@@ -105,7 +106,7 @@ class HomePageState extends State {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Water level report")),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.appTitle)),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
@@ -120,7 +121,7 @@ class HomePageState extends State {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 duration: Duration(milliseconds: 500),
-                content: Text("Updating!"),
+                content: Text(AppLocalizations.of(context)!.updating),
               ),
             );
             setState(() {});

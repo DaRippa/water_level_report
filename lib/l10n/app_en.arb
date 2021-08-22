@@ -1,0 +1,41 @@
+{
+    "appTitle" : "Water level report",
+    "level" : "Current water level",
+    "date" : "Date",
+    "monShort": "mon",
+    "tueShort": "tue",
+    "wedShort": "wed",
+    "thuShort": "thu",
+    "friShort": "fri",
+    "satShort": "sat",
+    "sunShort": "sun",
+    "monFull": "Monday",
+    "tueFull": "Tuesday",
+    "wedFull": "Wednesday",
+    "thuFull": "Thursday",
+    "friFull": "Friday",
+    "satFull": "Saturday",
+    "sunFull": "Sunday",
+    "success": "Success!",
+    "failure": "Something went wrong...",
+    "error": "Error",
+    "updating": "Updating!",
+    "inform": "Inform me",
+    "everyDay": "every day",
+    "workDays": "on work days", 
+    "selectedDays": "on these days",
+    "at": "at",
+    "thresholdAbove": "if the level rises above",
+    "settings": "Settings",
+    "cancel": "Cancel",
+
+    "@appTitle" : {
+        "description" : "The name of the app"
+    },
+    "@level":  {
+        "description": "Label for current level"
+    },
+    "@date" : {
+        "description": "Label for date"
+    }
+}

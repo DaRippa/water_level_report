@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SelectDaysDialog extends StatefulWidget {
   final List<bool> _days;
@@ -24,17 +25,15 @@ class SelectDaysDialogState extends State<SelectDaysDialog> {
     widget.onSelectedDaysChanged(_selection);
   }
 
-  String _getDayLabel(int index) {
-    return <String>[
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-      "Sunday"
-    ][index];
-  }
+  String _getDayLabel(int index) => <String>[
+        AppLocalizations.of(context)!.monFull,
+        AppLocalizations.of(context)!.tueFull,
+        AppLocalizations.of(context)!.wedFull,
+        AppLocalizations.of(context)!.thuFull,
+        AppLocalizations.of(context)!.friFull,
+        AppLocalizations.of(context)!.satFull,
+        AppLocalizations.of(context)!.sunFull
+      ][index];
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +67,7 @@ class SelectDaysDialogState extends State<SelectDaysDialog> {
                       padding: EdgeInsets.only(left: 10, right: 5),
                       child: ElevatedButton(
                         onPressed: () => Navigator.pop(context),
-                        child: Text("Cancel"),
+                        child: Text(AppLocalizations.of(context)!.cancel),
                       ),
                     ),
                   ),

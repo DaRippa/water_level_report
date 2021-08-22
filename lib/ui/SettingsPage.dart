@@ -4,6 +4,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:water_level_report/model/SelectedDaysMode.dart';
 import 'package:water_level_report/model/UserSettings.dart';
 import 'package:water_level_report/util/SettingsProvider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'SelectDaysDialog.dart';
 
@@ -25,7 +26,9 @@ class SettingsPageState extends State<SettingsPage> {
 
     _settingsProvider.saveSettings(_settings).then((result) {
       SnackBar snackbar = SnackBar(
-        content: Text(result ? "Success!" : "Something went wrong..."),
+        content: Text(result
+            ? AppLocalizations.of(context)!.success
+            : AppLocalizations.of(context)!.failure),
         duration: Duration(seconds: 2),
       );
 
@@ -55,13 +58,13 @@ class SettingsPageState extends State<SettingsPage> {
 
   String _getSelectedDayLabels() {
     final List<String> labels = [
-      "mon",
-      "tue",
-      "wed",
-      "thu",
-      "fri",
-      "sat",
-      "sun"
+      AppLocalizations.of(context)!.monShort,
+      AppLocalizations.of(context)!.tueShort,
+      AppLocalizations.of(context)!.wedShort,
+      AppLocalizations.of(context)!.thuShort,
+      AppLocalizations.of(context)!.friShort,
+      AppLocalizations.of(context)!.satShort,
+      AppLocalizations.of(context)!.sunShort
     ];
 
     return _settings.days.map((day) => labels[day - 1]).join(", ");
@@ -72,17 +75,17 @@ class SettingsPageState extends State<SettingsPage> {
     final List<dynamic> modes = [
       {
         "mode": SelectedDaysMode.EVERY_DAY,
-        "title": Text("every day"),
+        "title": Text(AppLocalizations.of(context)!.everyDay),
         "subtitle": null,
       },
       {
         "mode": SelectedDaysMode.WORK_DAY,
-        "title": Text("on work days"),
+        "title": Text(AppLocalizations.of(context)!.workDays),
         "subtitle": null,
       },
       {
         "mode": SelectedDaysMode.CUSTOM,
-        "title": Text("on these days:"),
+        "title": Text(AppLocalizations.of(context)!.selectedDays),
         "subtitle": Text(
           _getSelectedDayLabels(),
           style: TextStyle(fontSize: 11),
@@ -92,7 +95,7 @@ class SettingsPageState extends State<SettingsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Settings"),
+        title: Text(AppLocalizations.of(context)!.settings),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -101,7 +104,7 @@ class SettingsPageState extends State<SettingsPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text("Inform me..."),
+                Text("${AppLocalizations.of(context)!.inform} ..."),
                 ListView.builder(
                   shrinkWrap: true,
                   itemCount: modes.length,
@@ -121,7 +124,8 @@ class SettingsPageState extends State<SettingsPage> {
                 margin: EdgeInsets.only(top: 10, bottom: 10),
                 child: Row(
                   children: [
-                    Text("at ${_settings.time.format(context)}"),
+                    Text(
+                        "${AppLocalizations.of(context)!.at} ${_settings.time.format(context)}"),
                     Flexible(
                       child: Container(),
                     ),
@@ -148,7 +152,7 @@ class SettingsPageState extends State<SettingsPage> {
               ),
               Row(
                 children: [
-                  Text("if the level rises above"),
+                  Text(AppLocalizations.of(context)!.thresholdAbove),
                   Container(
                     margin: EdgeInsets.only(
                       left: 10,
@@ -234,8 +238,6 @@ class SettingsPageState extends State<SettingsPage> {
         } else {
           setState(() => _settings.days = _settings.days);
         }
-
-        // _getSelectedDays();
       },
     );
   }
