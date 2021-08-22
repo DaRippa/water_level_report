@@ -85,7 +85,7 @@ class SettingsPageState extends State<SettingsPage> {
       },
       {
         "mode": SelectedDaysMode.CUSTOM,
-        "title": Text(AppLocalizations.of(context)!.selectedDays),
+        "title": Text("${AppLocalizations.of(context)!.selectedDays}:"),
         "subtitle": Text(
           _getSelectedDayLabels(),
           style: TextStyle(fontSize: 11),
@@ -124,8 +124,8 @@ class SettingsPageState extends State<SettingsPage> {
                 margin: EdgeInsets.only(top: 10, bottom: 10),
                 child: Row(
                   children: [
-                    Text(
-                        "${AppLocalizations.of(context)!.at} ${_settings.time.format(context)}"),
+                    Text("${AppLocalizations.of(context)!.at}" +
+                        " ${_settings.time.format(context)}"),
                     Flexible(
                       child: Container(),
                     ),
