@@ -8,7 +8,7 @@ import 'package:water_level_report/model/LevelData.dart';
 import 'package:water_level_report/model/SelectedDaysMode.dart';
 import 'package:water_level_report/model/UserSettings.dart';
 import 'package:water_level_report/util/DataProvider.dart';
-import 'package:water_level_report/util/Globals.dart';
+import 'package:water_level_report/util/Globals.dart' as globals;
 import 'package:water_level_report/util/SettingsProvider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:workmanager/workmanager.dart';
@@ -26,7 +26,7 @@ void callbackDispatcher() {
   Workmanager().executeTask(
     (task, inputData) async {
       Directory appDir = await getApplicationDocumentsDirectory();
-      String settingsPath = appDir.path + Globals.SETTINGS_PATH;
+      String settingsPath = appDir.path + globals.SETTINGS_PATH;
       UserSettings _settings =
           await SettingsProvider(settingsPath).loadSettings();
 
@@ -67,7 +67,7 @@ class SettingsPageState extends State<SettingsPage> {
     Duration delay = target.difference(now);
 
     await Workmanager().initialize(callbackDispatcher);
-    await Workmanager().registerPeriodicTask(Globals.BGTASK_NAME, "checkLevel",
+    await Workmanager().registerPeriodicTask(globals.BGTASK_NAME, "checkLevel",
         frequency: Duration(days: 1),
         existingWorkPolicy: ExistingWorkPolicy.replace,
         initialDelay: delay);
@@ -98,7 +98,7 @@ class SettingsPageState extends State<SettingsPage> {
     super.initState();
 
     getApplicationDocumentsDirectory().then((result) {
-      String dir = result.path + Globals.SETTINGS_PATH;
+      String dir = result.path + globals.SETTINGS_PATH;
       _settingsProvider = SettingsProvider(dir);
 
       _settingsProvider.loadSettings().then((result) {
