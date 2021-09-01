@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:water_level_report/business/NotificationManager.dart';
@@ -87,7 +88,12 @@ class SettingsPageState extends State<SettingsPage> {
       ScaffoldMessenger.of(context).showSnackBar(snackbar);
 
       if (result) {
-        _startBackgroundTask();
+        if (Platform.isAndroid ||
+            Platform.isIOS ||
+            Platform.isLinux ||
+            Platform.isMacOS) {
+          _startBackgroundTask();
+        }
         Navigator.pop(context);
       }
     });
@@ -155,78 +161,96 @@ class SettingsPageState extends State<SettingsPage> {
           padding: EdgeInsets.all(10.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text("${AppLocalizations.of(context)!.inform} ..."),
-                ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: modes.length,
-                  itemBuilder: (builder, index) {
-                    return RadioListTile<SelectedDaysMode>(
-                      value: modes[index]["mode"],
-                      title: modes[index]["title"],
-                      subtitle: modes[index]["subtitle"],
-                      groupValue: _settings.mode,
-                      onChanged: _modeChanged,
-                      activeColor: Theme.of(context).accentColor,
-                    );
-                  },
-                ),
-              ]),
-              Container(
-                margin: EdgeInsets.only(top: 10, bottom: 10),
-                child: Row(
+              Row(
+                children: [
+                  Text("${AppLocalizations.of(context)!.inform} ..."),
+                  Switch(
+                      value: _settings.isActive,
+                      onChanged: (isActive) {
+                        setState(() {
+                          _settings.isActive = isActive;
+                        });
+                      })
+                ],
+              ),
+              Visibility(
+                visible: _settings.isActive,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("${AppLocalizations.of(context)!.at}" +
-                        " ${_settings.time.format(context)}"),
-                    Flexible(
-                      child: Container(),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: modes.length,
+                      itemBuilder: (builder, index) {
+                        return RadioListTile<SelectedDaysMode>(
+                          value: modes[index]["mode"],
+                          title: modes[index]["title"],
+                          subtitle: modes[index]["subtitle"],
+                          groupValue: _settings.mode,
+                          onChanged: _modeChanged,
+                          activeColor: Theme.of(context).accentColor,
+                        );
+                      },
                     ),
                     Container(
-                      margin: EdgeInsets.only(
-                        left: 20,
-                        right: 20,
+                      margin: EdgeInsets.only(top: 10, bottom: 10),
+                      child: Row(
+                        children: [
+                          Text("${AppLocalizations.of(context)!.at}" +
+                              " ${_settings.time.format(context)}"),
+                          Flexible(
+                            child: Container(),
+                          ),
+                          Container(
+                            margin: EdgeInsets.only(
+                              left: 20,
+                              right: 20,
+                            ),
+                            child: ElevatedButton(
+                              onPressed: () => showTimePicker(
+                                context: context,
+                                initialTime: _settings.time,
+                              ).then((time) {
+                                if (time != null)
+                                  setState(() {
+                                    _settings.time = time;
+                                  });
+                              }),
+                              child: Icon(Icons.edit),
+                            ),
+                          ),
+                        ],
                       ),
-                      child: ElevatedButton(
-                        onPressed: () => showTimePicker(
-                          context: context,
-                          initialTime: _settings.time,
-                        ).then((time) {
-                          if (time != null)
-                            setState(() {
-                              _settings.time = time;
-                            });
-                        }),
-                        child: Icon(Icons.edit),
-                      ),
+                    ),
+                    Row(
+                      children: [
+                        Text(AppLocalizations.of(context)!.thresholdAbove),
+                        Container(
+                          margin: EdgeInsets.only(
+                            left: 10,
+                            right: 2,
+                          ),
+                          width: 50.0,
+                          child: TextField(
+                            textAlign: TextAlign.right,
+                            keyboardType: TextInputType.number,
+                            maxLength: 5,
+                            decoration: InputDecoration(
+                              counterText: "",
+                              contentPadding: EdgeInsets.only(bottom: 4),
+                              isDense: true,
+                              filled: false,
+                            ),
+                            controller: _levelController,
+                          ),
+                        ),
+                        Text("cm."),
+                      ],
                     ),
                   ],
                 ),
-              ),
-              Row(
-                children: [
-                  Text(AppLocalizations.of(context)!.thresholdAbove),
-                  Container(
-                    margin: EdgeInsets.only(
-                      left: 10,
-                      right: 2,
-                    ),
-                    width: 50.0,
-                    child: TextField(
-                      textAlign: TextAlign.right,
-                      keyboardType: TextInputType.number,
-                      maxLength: 5,
-                      decoration: InputDecoration(
-                        counterText: "",
-                        contentPadding: EdgeInsets.only(bottom: 4),
-                        isDense: true,
-                        filled: false,
-                      ),
-                      controller: _levelController,
-                    ),
-                  ),
-                  Text("cm."),
-                ],
               ),
             ],
           ),
