@@ -167,6 +167,7 @@ class SettingsPageState extends State<SettingsPage> {
                   Text("${AppLocalizations.of(context)!.inform} ..."),
                   Switch(
                       value: _settings.isActive,
+                      activeColor: Theme.of(context).accentColor,
                       onChanged: (isActive) {
                         setState(() {
                           _settings.isActive = isActive;
