@@ -17,7 +17,6 @@ class MyHomePage extends StatefulWidget {
 
 class HomePageState extends State {
   final Color headlineColor = Color(0xFF05B8FF);
-
   @override
   void initState() {
     super.initState();

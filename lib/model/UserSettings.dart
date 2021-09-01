@@ -4,7 +4,6 @@ import 'package:water_level_report/model/SelectedDaysMode.dart';
 class UserSettings {
   int level = 325;
   SelectedDaysMode mode = SelectedDaysMode.WORK_DAY;
-  BuildContext _context;
 
   List<int> days = [
     DateTime.monday,
@@ -15,9 +14,9 @@ class UserSettings {
   ];
   TimeOfDay time = TimeOfDay(hour: 6, minute: 0);
 
-  UserSettings(this._context);
+  UserSettings();
 
-  UserSettings.fromJSON(Map<String, dynamic> data, this._context)
+  UserSettings.fromJSON(Map<String, dynamic> data)
       : this.level = data["threshold"],
         this.days = List.from(data["days"]),
         this.mode = SelectedDaysMode.values[data["mode"]] {
@@ -33,7 +32,7 @@ class UserSettings {
     return TimeOfDay(hour: int.parse(chunks[0]), minute: int.parse(chunks[1]));
   }
 
-  Map<String, dynamic> toMap() => {
+  Map<String, dynamic> toMap(_context) => {
         "threshold": level,
         "days": days.toList(),
         "time": time.format(_context),

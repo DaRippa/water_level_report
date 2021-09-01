@@ -6,23 +6,22 @@ import 'package:water_level_report/model/UserSettings.dart';
 
 class SettingsProvider {
   late final String _filepath;
-  final BuildContext _context;
 
-  SettingsProvider(this._filepath, this._context);
+  SettingsProvider(this._filepath);
 
   Future<UserSettings> loadSettings() async {
     try {
       File settingsFile = File(_filepath);
       String content = await settingsFile.readAsString();
 
-      return UserSettings.fromJSON(jsonDecode(content), _context);
+      return UserSettings.fromJSON(jsonDecode(content));
     } catch (_) {
-      return UserSettings(_context);
+      return UserSettings();
     }
   }
 
-  Future<bool> saveSettings(UserSettings settings) async {
-    String json = jsonEncode(settings.toMap());
+  Future<bool> saveSettings(UserSettings settings, BuildContext context) async {
+    String json = jsonEncode(settings.toMap(context));
     bool success = true;
 
     try {

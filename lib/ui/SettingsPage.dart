@@ -1,10 +1,17 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:water_level_report/business/NotificationManager.dart';
+import 'package:water_level_report/model/LevelData.dart';
 import 'package:water_level_report/model/SelectedDaysMode.dart';
 import 'package:water_level_report/model/UserSettings.dart';
+import 'package:water_level_report/util/DataProvider.dart';
+import 'package:water_level_report/util/Globals.dart';
 import 'package:water_level_report/util/SettingsProvider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:workmanager/workmanager.dart';
 
 import 'SelectDaysDialog.dart';
 
@@ -15,16 +22,61 @@ class SettingsPage extends StatefulWidget {
   }
 }
 
+void callbackDispatcher() {
+  Workmanager().executeTask(
+    (task, inputData) async {
+      Directory appDir = await getApplicationDocumentsDirectory();
+      String settingsPath = appDir.path + Globals.SETTINGS_PATH;
+      UserSettings _settings =
+          await SettingsProvider(settingsPath).loadSettings();
+
+      if (!_settings.days.contains(DateTime.now().weekday)) {
+        return true;
+      }
+
+      DataProvider provider = DataProvider();
+      List<LevelData> data = await provider.getData();
+      if (data.isEmpty) return false;
+
+      if (data[0].value >= _settings.level) {
+        NotificationManager _manager = NotificationManager();
+        await _manager.sendNotification(
+            id: 1, message: "Current level is ${data[0].value}cm.");
+      }
+
+      return true;
+    },
+  );
+}
+
 class SettingsPageState extends State<SettingsPage> {
   late final SettingsProvider _settingsProvider;
   late final TextEditingController _levelController = TextEditingController();
-  late UserSettings _settings = UserSettings(context);
+  late UserSettings _settings = UserSettings();
   List<bool> _selectedDays = List.generate(7, (index) => false);
+
+  Future<void> _startBackgroundTask() async {
+    DateTime now = DateTime.now();
+    DateTime target = DateTime(now.year, now.month, now.day,
+        _settings.time.hour, _settings.time.minute, 0);
+
+    if (now.millisecondsSinceEpoch > target.millisecondsSinceEpoch) {
+      target = target.add(Duration(days: 1));
+    }
+
+    Duration delay = target.difference(now);
+
+    await Workmanager().initialize(callbackDispatcher);
+    await Workmanager().registerPeriodicTask(Globals.BGTASK_NAME, "checkLevel",
+        frequency: Duration(days: 1),
+        existingWorkPolicy: ExistingWorkPolicy.replace,
+        initialDelay: delay);
+  }
 
   void _saveAndBack() {
     _settings.level = int.tryParse(_levelController.text) ?? _settings.level;
 
-    _settingsProvider.saveSettings(_settings).then((result) {
+    _settingsProvider.saveSettings(_settings, context).then((result) {
       SnackBar snackbar = SnackBar(
         content: Text(result
             ? AppLocalizations.of(context)!.success
@@ -35,6 +87,7 @@ class SettingsPageState extends State<SettingsPage> {
       ScaffoldMessenger.of(context).showSnackBar(snackbar);
 
       if (result) {
+        _startBackgroundTask();
         Navigator.pop(context);
       }
     });
@@ -45,8 +98,8 @@ class SettingsPageState extends State<SettingsPage> {
     super.initState();
 
     getApplicationDocumentsDirectory().then((result) {
-      String dir = result.path + "/Water Level Report/usersettings.json";
-      _settingsProvider = SettingsProvider(dir, context);
+      String dir = result.path + Globals.SETTINGS_PATH;
+      _settingsProvider = SettingsProvider(dir);
 
       _settingsProvider.loadSettings().then((result) {
         setState(() => _settings = result);
