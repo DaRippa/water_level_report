@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:water_level_report/model/LevelData.dart';
 import 'package:water_level_report/ui/SettingsPage.dart';
+import 'package:water_level_report/ui/VerticalDragUpdater.dart';
 import 'package:water_level_report/util/DataProvider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -72,31 +73,33 @@ class HomePageState extends State {
 
         LevelData leveldata = data[index];
 
-        return Padding(
-          padding: EdgeInsets.only(left: 10, top: 10),
-          child: ListView(
-            children: [
-              Text(
+        return ListView(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(left: 10, top: 10),
+              child: Text(
                 AppLocalizations.of(context)!.level + ":",
                 style: headlineStyle,
               ),
-              Padding(
-                padding: EdgeInsets.only(top: 20, left: 30, bottom: 50),
-                child: Text(
-                  "${leveldata.value.toInt()}cm",
-                ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 20, left: 40, bottom: 50),
+              child: Text(
+                "${leveldata.value.toInt()}cm",
               ),
-              Text(
+            ),
+            Padding(
+              padding: EdgeInsets.only(left: 10),
+              child: Text(
                 AppLocalizations.of(context)!.date + ":",
                 style: headlineStyle,
               ),
-              Padding(
-                padding: EdgeInsets.only(top: 20, left: 30),
-                child:
-                    Text("${formatter.format(leveldata.timestamp.toLocal())}"),
-              )
-            ],
-          ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 20, left: 40),
+              child: Text("${formatter.format(leveldata.timestamp.toLocal())}"),
+            )
+          ],
         );
       },
     );
@@ -115,17 +118,11 @@ class HomePageState extends State {
       ),
       body: Container(
         color: Colors.transparent,
-        child: GestureDetector(
-          onDoubleTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                duration: Duration(milliseconds: 500),
-                content: Text(AppLocalizations.of(context)!.updating),
-              ),
-            );
+        child: VerticalDragUpdater(
+          content: getDisplayWidget(),
+          onUpdate: () {
             setState(() {});
           },
-          child: getDisplayWidget(),
         ),
       ),
     );
