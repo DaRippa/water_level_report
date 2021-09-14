@@ -5,16 +5,19 @@ import 'package:flutter_native_timezone/flutter_native_timezone.dart';
 class NotificationManager {
   static NotificationManager _instance = NotificationManager._internal();
 
-  static final String _notificationTitle = "High level at Elbe-Strombrücke";
-
   final AndroidNotificationDetails _androidNotificationDetails =
-      AndroidNotificationDetails("WaterLevelReportChannel",
-          "Water Level Report", "Notification channel for water level report",
-          priority: Priority.defaultPriority,
-          importance: Importance.high,
-          showWhen: false);
+      AndroidNotificationDetails(
+    "WaterLevelReportChannel",
+    "Report water level",
+    "Notification channel for water level report",
+    priority: Priority.defaultPriority,
+    importance: Importance.high,
+    showWhen: true,
+  );
 
   NotificationManager._internal();
+
+  static final String _notificationTitle = "High level at Elbe-Strombrücke";
 
   factory NotificationManager() => _instance;
 
@@ -23,7 +26,7 @@ class NotificationManager {
 
   static Future<void> init() async {
     final AndroidInitializationSettings _androidInitSettings =
-        AndroidInitializationSettings('app_icon');
+        AndroidInitializationSettings('app_icon_mono');
 
     final IOSInitializationSettings _iosInitSettings =
         IOSInitializationSettings();

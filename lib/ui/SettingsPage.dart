@@ -41,7 +41,7 @@ void callbackDispatcher() {
       if (data[0].value >= _settings.level) {
         NotificationManager _manager = NotificationManager();
         await _manager.sendNotification(
-            id: 1, message: "Current level is ${data[0].value}cm.");
+            id: 1, message: "Current level is ${data[0].value.toInt()}cm.");
       }
 
       return true;

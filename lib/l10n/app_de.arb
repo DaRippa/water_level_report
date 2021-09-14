@@ -27,5 +27,7 @@
     "at": "um",
     "thresholdAbove": "falls der Pegel diesen Wert übersteigt:",
     "settings": "Einstellungen",
-    "cancel": "Abbrechen"
+    "cancel": "Abbrechen",
+    "notificationBody": "Der aktuelle Pegel ist {level}cm.",
+    "notificationTitle": "Hoher Pegel bei {station}"
 }

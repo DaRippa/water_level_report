@@ -28,6 +28,8 @@
     "thresholdAbove": "if the level rises above",
     "settings": "Settings",
     "cancel": "Cancel",
+    "notificationBody": "Current level is {level}cm.",
+    "notificationTitle": "High level at {station}",
 
     "@appTitle" : {
         "description" : "The name of the app"
@@ -37,5 +39,15 @@
     },
     "@date" : {
         "description": "Label for date"
+    },
+    "@notificationBody" : {
+        "placeholders" :{
+            "level":{}
+        }
+    },
+    "@notificationTitle":{
+        "placeholders": {
+            "station": {}
+        }
     }
 }
