@@ -20,7 +20,7 @@ class DataProvider {
       final http.Response response = await http.get(Uri.parse(url));
 
       Iterable list = jsonDecode(response.body);
-      result = List.from(list.map((entry) => LevelData.fromObject(entry)));
+      result = List.from(list.map((entry) => LevelData.fromJSON(entry)));
     } catch (_) {
       throw Exception("Could not fetch data!");
     }

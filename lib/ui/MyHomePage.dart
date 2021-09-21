@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:water_level_report/model/LevelData.dart';
+import 'package:water_level_report/ui/LineChartWidget.dart';
 import 'package:water_level_report/ui/SettingsPage.dart';
 import 'package:water_level_report/ui/VerticalDragUpdater.dart';
 import 'package:water_level_report/util/DataProvider.dart';
@@ -23,11 +24,7 @@ class HomePageState extends State {
     super.initState();
   }
 
-  Future<List<LevelData>> _queryData() async {
-    DataProvider provider = DataProvider();
-
-    return provider.getData();
-  }
+  Future<List<LevelData>> _queryData() async => DataProvider().getData();
 
   Widget getDisplayWidget() {
     DateFormat formatter = DateFormat("dd.MM.y, HH:mm", "de_DE");
@@ -68,12 +65,19 @@ class HomePageState extends State {
           );
         }
 
-        List data = snapshot.data as List;
+        List<LevelData> data = snapshot.data as List<LevelData>;
         int index = data.length - 1;
 
         LevelData leveldata = data[index];
 
-        return ListView(
+        List<LevelData> dataToShow = data
+            .where((element) =>
+                element.timestamp.hour % 6 == 0 &&
+                element.timestamp.minute == 0)
+            .toList();
+
+        Widget texts = Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
               padding: EdgeInsets.only(left: 10, top: 10),
@@ -98,9 +102,41 @@ class HomePageState extends State {
             Padding(
               padding: EdgeInsets.only(top: 20, left: 40),
               child: Text("${formatter.format(leveldata.timestamp.toLocal())}"),
-            )
+            ),
           ],
         );
+
+        return OrientationBuilder(builder: (context, orientation) {
+          return orientation == Orientation.portrait
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    texts,
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                          top: 40,
+                          left: 0,
+                          right: 40,
+                          bottom: 60,
+                        ),
+                        child: LineChartWidget(data: dataToShow),
+                      ),
+                    ),
+                  ],
+                )
+              : Row(
+                  children: [
+                    texts,
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.all(10),
+                        child: LineChartWidget(data: dataToShow),
+                      ),
+                    ),
+                  ],
+                );
+        });
       },
     );
   }
