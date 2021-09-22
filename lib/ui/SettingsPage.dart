@@ -6,6 +6,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:water_level_report/business/NotificationManager.dart';
 import 'package:water_level_report/model/LevelData.dart';
 import 'package:water_level_report/model/SelectedDaysMode.dart';
+import 'package:water_level_report/model/StationInfo.dart';
 import 'package:water_level_report/model/UserSettings.dart';
 import 'package:water_level_report/util/DataProvider.dart';
 import 'package:water_level_report/util/Globals.dart' as globals;
@@ -54,6 +55,7 @@ class SettingsPageState extends State<SettingsPage> {
   late final TextEditingController _levelController = TextEditingController();
   late UserSettings _settings = UserSettings();
   List<bool> _selectedDays = List.generate(7, (index) => false);
+  List<StationInfo> _stations = [];
 
   Future<void> _startBackgroundTask() async {
     DateTime now = DateTime.now();
@@ -102,16 +104,20 @@ class SettingsPageState extends State<SettingsPage> {
   void initState() {
     super.initState();
 
-    getApplicationDocumentsDirectory().then((result) {
-      String dir = result.path + globals.SETTINGS_PATH;
-      _settingsProvider = SettingsProvider(dir);
+    getApplicationDocumentsDirectory().then(
+      (result) {
+        String dir = result.path + globals.SETTINGS_PATH;
+        _settingsProvider = SettingsProvider(dir);
 
-      _settingsProvider.loadSettings().then((result) {
-        setState(() => _settings = result);
-        _levelController.text = _settings.level.toString();
-        _getSelectedDays();
-      });
-    });
+        _settingsProvider.loadSettings().then(
+          (result) {
+            setState(() => _settings = result);
+            _levelController.text = _settings.level.toString();
+            _getSelectedDays();
+          },
+        );
+      },
+    );
   }
 
   String _getSelectedDayLabels() {
@@ -182,6 +188,7 @@ class SettingsPageState extends State<SettingsPage> {
                   children: [
                     ListView.builder(
                       shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
                       itemCount: modes.length,
                       itemBuilder: (builder, index) {
                         return RadioListTile<SelectedDaysMode>(
@@ -224,9 +231,56 @@ class SettingsPageState extends State<SettingsPage> {
                         ],
                       ),
                     ),
+                    Text(AppLocalizations.of(context)!.threshold),
+                    Container(
+                      margin: EdgeInsets.only(
+                        top: 10,
+                        bottom: 10,
+                      ),
+                      child: FutureBuilder(
+                        future: DataProvider()
+                            .getStations()
+                            .then((result) => _stations = result),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return DropdownButton(
+                              isDense: false,
+                              items: _stations
+                                  .map(
+                                    (station) => DropdownMenuItem(
+                                      child: Text(
+                                          "${station.water}:\n\t${station.name}"),
+                                      value: station.id,
+                                    ),
+                                  )
+                                  .toList(),
+                              onChanged: (item) {
+                                setState(
+                                  () {
+                                    StationInfo station = _stations.firstWhere(
+                                        (element) => element.id == item);
+                                    _settings.stationId = item.toString();
+                                    _settings.stationName = station.name;
+                                  },
+                                );
+                              },
+                              value: _settings.stationId,
+                            );
+                          }
+                          return DropdownButton(
+                              isDense: true,
+                              items: [
+                                DropdownMenuItem(
+                                    child: Text(_settings.stationName),
+                                    value: _settings.stationId),
+                              ],
+                              value: _settings.stationId);
+                        },
+                      ),
+                    ),
                     Row(
                       children: [
-                        Text(AppLocalizations.of(context)!.thresholdAbove),
+                        Text("${AppLocalizations.of(context)!.above}"),
                         Container(
                           margin: EdgeInsets.only(
                             left: 10,

@@ -106,37 +106,39 @@ class HomePageState extends State {
           ],
         );
 
-        return OrientationBuilder(builder: (context, orientation) {
-          return orientation == Orientation.portrait
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    texts,
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                          top: 40,
-                          left: 0,
-                          right: 40,
-                          bottom: 60,
+        return OrientationBuilder(
+          builder: (context, orientation) {
+            return orientation == Orientation.portrait
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      texts,
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                            top: 40,
+                            left: 0,
+                            right: 40,
+                            bottom: 60,
+                          ),
+                          child: LineChartWidget(data: dataToShow),
                         ),
-                        child: LineChartWidget(data: dataToShow),
                       ),
-                    ),
-                  ],
-                )
-              : Row(
-                  children: [
-                    texts,
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.all(10),
-                        child: LineChartWidget(data: dataToShow),
+                    ],
+                  )
+                : Row(
+                    children: [
+                      texts,
+                      Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.all(10),
+                          child: LineChartWidget(data: dataToShow),
+                        ),
                       ),
-                    ),
-                  ],
-                );
-        });
+                    ],
+                  );
+          },
+        );
       },
     );
   }

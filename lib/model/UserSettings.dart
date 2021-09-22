@@ -5,6 +5,8 @@ class UserSettings {
   int level = 325;
   SelectedDaysMode mode = SelectedDaysMode.WORK_DAY;
   bool isActive = true;
+  String stationId = "502180";
+  String stationName = "MAGDEBURG-STROMBRÜCKE";
 
   List<int> days = [
     DateTime.monday,
@@ -21,7 +23,9 @@ class UserSettings {
       : this.level = data["threshold"],
         this.days = List.from(data["days"]),
         this.mode = SelectedDaysMode.values[data["mode"]],
-        this.isActive = data["active"] {
+        this.isActive = data["active"],
+        this.stationId = data["stationid"],
+        this.stationName = data["stationname"] {
     this.time = _parseTimeOfDay(data["time"]);
   }
 
@@ -40,5 +44,7 @@ class UserSettings {
         "time": time.format(_context),
         "mode": mode.index,
         "active": isActive,
+        "stationid": stationId,
+        "stationname": stationName
       };
 }
