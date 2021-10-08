@@ -267,6 +267,9 @@ class SettingsPageState extends State<SettingsPage> {
                               value: _settings.stationId,
                             );
                           }
+
+                          if (snapshot.hasError) {}
+
                           return DropdownButton(
                               isDense: true,
                               items: [
